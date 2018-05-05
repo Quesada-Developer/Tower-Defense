@@ -8,6 +8,7 @@ const height = width * 9 / 16
 const tileSize = height / numberOfRows
 
 const tileGrid = []
+const graph = new Graph
 let homeIndex, enemyIndex, mx, my
 
 const init = () => {
@@ -22,16 +23,24 @@ const init = () => {
 		}
 	}
 
-
 	enemyIndex = Math.floor(Math.random() * Math.floor(numberOfTilesPerRow))
 	homeIndex = Math.floor(Math.random() * Math.floor(numberOfTilesPerRow)) + numberOfTilesPerRow * (numberOfRows - 1)
 
 	tileGrid[enemyIndex] = new Enemy(enemyIndex, enemyIndex*tileSize, 0, tileSize, tileSize)
 	tileGrid[homeIndex] = new Home(homeIndex, (homeIndex%numberOfTilesPerRow)*tileSize, height-tileSize, tileSize, tileSize)
 
-	tileGrid.forEach((tile) => {
-		tile.draw(context)
-	})
+	for(let i = 0; i < tileGrid.length; i++) {
+		graph.addVertex(tileGrid[i])
+
+		let tilesToAdd = []
+		if((i + 1)%numberOfTilesPerRow != 0) 
+			tilesToAdd.push(tileGrid[i+1])
+		if(Math.ceil(i/numberOfTilesPerRow) != numberOfRows)
+			tilesToAdd.push(tileGrid[i+numberOfTilesPerRow])
+		graph.addEdge(tileGrid[i], tilesToAdd)
+
+		tileGrid[i].draw(context)
+	}
 }
 
 document.addEventListener("DOMContentLoaded", init)
