@@ -35,7 +35,8 @@ const init = () => {
 		let tilesToAdd = []
 		if((i + 1)%numberOfTilesPerRow != 0) 
 			tilesToAdd.push(tileGrid[i+1])
-		if(Math.ceil(i/numberOfTilesPerRow) != numberOfRows)
+		
+		if(Math.floor(i/numberOfTilesPerRow) < (numberOfRows - 1))
 			tilesToAdd.push(tileGrid[i+numberOfTilesPerRow])
 		graph.addEdge(tileGrid[i], tilesToAdd)
 
