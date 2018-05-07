@@ -7,7 +7,7 @@ class Graph {
     }
     
     addVertex(vertex) {
-        if(vertex != null) 
+        if(vertex != null || !this.vertices.has(vertex)) 
             this.vertices.add(vertex)
         else
             throw 'Vertex cannot be null'
@@ -43,23 +43,56 @@ class Graph {
     }
 
     astar(start, end) {
-        let traversed = new Set()
+        let closedSet = new Set()
         
-        let discovered = new Set()
-        discovered.add(start)
+        let openSet = new Set()
+        openSet.add(start)
 
         let cameFrom = {}
-        let costToNode = {}
+        let gScore = {}
         vertices.forEach(vertex => {
-            costToNode[vertex.id] = Number.POSITIVE_INFINITY
+            gScore[vertex.id] = Number.POSITIVE_INFINITY
         })
-        costToNode[start.id] = 0
+        gScore[start.id] = 0
 
-        let hCost = {}
+        let fScore = {}
         vertices.forEach(vertex => {
-            hCost[vertex.id] = Number.POSITIVE_INFINITY
+            fScore[vertex.id] = Number.POSITIVE_INFINITY
         })
-        costToNode[start.id] = heuristicCost(start, end)
+        fScore[start.id] = heuristicCost(start, end)
+
+        while(openSet.size != 0) {
+            let current, cost = Number.POSITIVE_INFINITY
+            openSet.forEach(vertex => {
+                if(fScore[vertex.id] < cost) {
+                    current = vertex
+                    cost = fScore[vertex.id]
+                }
+            })
+
+            if(current === end)
+                return reconstructPath(cameFrom, current)
+            openSet.remove(current)
+            closeSet.add(current)
+
+            this.edge[current].id.forEach(neighbor => {
+                if(!closedSet.has(neighbor)) {
+                    if(!openSet.has(neigbor))
+                        openSet.add(neighbor)
+                    
+                    let gs = gScore[current.id] + 1
+                    if(gs < gScore[neighbor.id]) {
+                        cameFrom[neighbor] = current
+                        gScore[neighbor.id] = gs
+                        fScore[neighbor.id] = gs + heuristicCost(neighbor, end)
+                    }
+
+                }
+            })
+
+            return false
+            
+        }
     }
 
     heuristicCost(vertex, end) {
